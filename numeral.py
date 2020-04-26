@@ -17,10 +17,9 @@ class Numeral:
         return self.__str__()
 
     def check(self, number):
+        if number[0] == "-":
+            number = number[1:]
         if self._base <= 10:
             return all((int(char) < self._base for char in number))
         elif self._base in Numeral.allowed:
             return all((char in Numeral.allowed[self._base] for char in number))
-
-if __name__ == "__main__":
-    n = Numeral(10)
