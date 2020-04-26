@@ -1,5 +1,3 @@
-
-
 class Numeral:
 
     representation = {2: "0b", 8: "0", 16: "0x"}
@@ -10,52 +8,19 @@ class Numeral:
         values[value] = key
 
     def __init__(self, base = 10):
-        self.base = base
-
-    def check(self, number):
-        if self.base <= 10:
-            return all((int(char) < self.base for char in number))
-        elif self.base in Numeral.allowed:
-            return all((char in Numeral.allowed[self.base] for char in number))
-
-
-class Number:
-
-    def __init__(self, value = 0, numeral = Numeral(10)):
-        if type(numeral) == Numeral:
-            self.numeral = numeral
-        else:
-            self.numeral = Numeral(numeral)
-
-        value = str(value).lower()
-        if self.numeral.check(value):
-            self.value = value
-        else:
-            raise ValueError(f"{value} is not a valid value for a numeral system with the base {self.numeral.base}")
+        self._base = base
 
     def __str__(self):
-        if self.numeral.base in Numeral.representation:
-            return f"{Numeral.representation[self.numeral.base]}{self.value}"
-        return str(self.value)
+        return str(self._base)
 
-    def convert(self, base):
-        value = str(self.value)
-        decimal = 0
-        for index in range(len(value)):
-            significance = len(value)-index-1
-            decimal += Numeral.values[value[index]] * self.numeral.base**significance if value[index] in Numeral.values else int(value[index]) * self.numeral.base**significance
-        highest_significance = 0
-        while not (base**(highest_significance+1))//decimal:
-            highest_significance += 1
-        if not (base**(highest_significance+1))%decimal:
-            highest_significance += 1
-        value = ""
-        for significance in range(highest_significance, -1, -1):
-            value_ = str(decimal//(base**significance))
-            value += Numeral.values[int(value_)] if int(value_) in Numeral.values else value_
-            decimal = decimal%(base**significance)
-        return Number(value, base)
+    def __repr__(self):
+        return self.__str__()
+
+    def check(self, number):
+        if self._base <= 10:
+            return all((int(char) < self._base for char in number))
+        elif self._base in Numeral.allowed:
+            return all((char in Numeral.allowed[self._base] for char in number))
 
 if __name__ == "__main__":
-    n = Number("428", 10).convert(16).convert(8).convert(2)
-    print(n)
+    n = Numeral(10)
