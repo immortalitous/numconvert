@@ -20,7 +20,7 @@ class Number:
 
     def __str__(self):
         if self._numeral._base in Numeral.representation:
-            return f"{Numeral.representation[self._numeral._base]}{self._value}"
+            return f"{self._value}"
         return str(self._value)
 
     def __repr__(self):
@@ -40,6 +40,9 @@ class Number:
 
     def get_base(self):
         return self._numeral
+
+    def get_prefix(self):
+        return Numeral.representation[self._numeral._base]
 
     def convert(self, base):
         base = self.__str_to_int(base)
@@ -69,4 +72,5 @@ class Number:
             decimal = decimal%(base**significance)
         if inverse:
             value = "-" + value
+        value = value.lstrip("0")
         return Number(value, base)
