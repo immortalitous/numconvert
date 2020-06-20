@@ -26,14 +26,16 @@ class Numconvert(ThemedTk):
 
         style = Style()
         style.configure("TButton", foreground = "#777777", font = (font, 11))
-        style.configure("TEntry", selectbackground = "#555555")
         style.configure("convert.TButton", foreground = "#58932D")
-        style.configure("clear.TLabelframe.TButton", foreground = "#E03C31", background = "#414141")
+        style.configure("TEntry", selectbackground = "#555555")
         style.configure("TLabel", font = (font, 11))
         style.configure("TLabelframe.Label", font = (font, 11), foreground = "#777777", background = "#414141")
         style.configure("TLabelframe.TButton", background = "#414141")
+        style.configure("clear.TLabelframe.TButton", foreground = "#E03C31", background = "#414141")
         style.configure("TLabelframe.TCombobox", background = "#414141", selectbackground = "#464646")
+        style.configure("choosing.TLabelframe.TCombobox", background = "#414141", selectbackground = "#6A6A6A")
         style.configure("TLabelframe.TEntry", background = "#414141")
+        style.configure("invalid.TLabelframe.TEntry", foreground = "#E03C31", background = "#414141")
         style.configure("TLabelframe.TLabel", foreground = "#777777", background = "#414141")
 
         def character_limit(object, limit):
@@ -42,9 +44,11 @@ class Numconvert(ThemedTk):
 
         def copy_number():
             pyperclip.copy(self.prefix_entry.get() + self.value_entry.get())
+            self.focus()
 
         def copy_converted_number():
             pyperclip.copy(self.converted_prefix_entry.get() + self.converted_value_entry.get())
+            self.focus()
 
         def clear(widget):
             widget.delete(0, "end")
@@ -54,12 +58,14 @@ class Numconvert(ThemedTk):
             set_prefix(self.type_combobox, self.prefix_entry)
             clear(self.prefix_entry)
             clear(self.value_entry)
+            self.focus()
 
         def clear_converted_number():
             self.converted_type_combobox.set("")
             set_prefix(self.converted_type_combobox, self.converted_prefix_entry)
             clear(self.converted_prefix_entry)
             clear(self.converted_value_entry)
+            self.focus()
 
         def convert():
             type = self.type_combobox.get().strip()
@@ -70,13 +76,14 @@ class Numconvert(ThemedTk):
                 try:
                     self.converted_value_entry.insert(0, Number(value, Numconvert.bases[type]).convert(Numconvert.bases[converted_type]))
                 except ValueError:
-                    print("wrong format")
-            if not value:
-                print("not value")
+                    self.value_entry.configure(style = "invalid.TLabelframe.TEntry")
             if not type:
-                print("not type")
+                pass
             if not converted_type:
-                print("not converted_type")
+                pass
+            if not value:
+                self.value_entry.configure(style = "invalid.TLabelframe.TEntry")
+            self.focus()
 
         def switch():
             prefix_entry = self.prefix_entry.get()
@@ -96,6 +103,8 @@ class Numconvert(ThemedTk):
             self.converted_value_entry.insert(0, value_entry)
             self.converted_type_combobox.current(type_combobox)
 
+            self.focus()
+
         def set_prefix(combobox_widget, prefix_widget):
             type = combobox_widget.get().strip()
             if type in Numconvert.prefix_conversion:
@@ -110,10 +119,16 @@ class Numconvert(ThemedTk):
                 prefix_widget.config(state = "disabled")
 
         def set_number_prefix(event):
+            self.type_combobox.configure(style = "TLabelframe.TCombobox")
             set_prefix(self.type_combobox, self.prefix_entry)
 
         def set_converted_number_prefix(event):
+            self.converted_type_combobox.configure(style = "TLabelframe.TCombobox")
             set_prefix(self.converted_type_combobox, self.converted_prefix_entry)
+
+        def combobox_change_style(event):
+            combobox = event.widget
+            combobox.configure(style = "choosing.TLabelframe.TCombobox")
 
 
         self.number_labelframe = LabelFrame(self, text = "Number", width = 380, height = 215)
@@ -123,6 +138,7 @@ class Numconvert(ThemedTk):
         self.type_string = StringVar()
         self.type_combobox = Combobox(self.number_labelframe, style = "TLabelframe.TCombobox", textvariable = self.type_string, width = 18, state = "readonly", exportselection = 0, values = ["", " binary", " octal", " decimal", " hexadecimal"], font = (font, 10))
         self.type_combobox.place(x = 190, y = 40, anchor = "center")
+        self.type_combobox.bind("<Button-1>", combobox_change_style)
         self.type_combobox.bind("<<ComboboxSelected>>", set_number_prefix)
         Tooltip(self.type_combobox, "select type")
 
@@ -160,6 +176,7 @@ class Numconvert(ThemedTk):
 
         self.converted_type_string = StringVar()
         self.converted_type_combobox = Combobox(self.converted_number_labelframe, style = "TLabelframe.TCombobox", textvariable = self.converted_type_string, width = 18, state = "readonly", exportselection = 0, values = ["", " binary", " octal", " decimal", " hexadecimal"], font = (font, 10))
+        self.converted_type_combobox.bind("<Button-1>", combobox_change_style)
         self.converted_type_combobox.place(x = 190, y = 40, anchor = "center")
         self.converted_type_combobox.bind("<<ComboboxSelected>>", set_converted_number_prefix)
         Tooltip(self.converted_type_combobox, "select type")
