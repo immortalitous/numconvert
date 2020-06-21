@@ -1,3 +1,5 @@
+import PIL.Image
+import PIL.ImageTk
 import pyglet
 import pyperclip
 import time
@@ -11,7 +13,7 @@ pyglet.font.add_file("share_tech_mono.ttf")
 
 class Numconvert(ThemedTk):
 
-    prefix_conversion = {"binary": "0b", "octal": "0o", "hexadecimal": "0x"}
+    prefix_conversion = {"binary": "0b", "octal": "0o", "decimal": "0d", "hexadecimal": "0x"}
     bases = {"binary": 2, "octal": 8, "decimal": 10, "hexadecimal": 16}
 
     def __init__(self):
@@ -23,6 +25,10 @@ class Numconvert(ThemedTk):
 
         font = "Share Tech Mono"
         entry_font = "Consolas"
+
+        error_image = PIL.Image.open("error.png")
+        error_image.thumbnail((20, 20), PIL.Image.ANTIALIAS)
+        error_image = PIL.ImageTk.PhotoImage(error_image)
 
         style = Style()
         style.configure("TButton", foreground = "#777777", font = (font, 11))
@@ -41,6 +47,8 @@ class Numconvert(ThemedTk):
         def character_limit(object, limit):
             if len(object.get()) >= limit:
                 object.set(object.get()[:limit])
+            if object == self.value_string:
+                self.value_error_label.place_forget()
 
         def copy_number():
             pyperclip.copy(self.prefix_entry.get() + self.value_entry.get())
@@ -76,13 +84,13 @@ class Numconvert(ThemedTk):
                 try:
                     self.converted_value_entry.insert(0, Number(value, Numconvert.bases[type]).convert(Numconvert.bases[converted_type]))
                 except ValueError:
-                    self.value_entry.configure(style = "invalid.TLabelframe.TEntry")
+                    self.value_error_label.place(x = 52.5, y = 95, anchor = "center")
             if not type:
-                pass
+                self.type_error_label.place(x = 90, y = 40, anchor = "center")
             if not converted_type:
-                pass
+                self.converted_type_error_label.place(x = 90, y = 40, anchor = "center")
             if not value:
-                self.value_entry.configure(style = "invalid.TLabelframe.TEntry")
+                self.value_error_label.place(x = 52.5, y = 95, anchor = "center")
             self.focus()
 
         def switch():
@@ -119,10 +127,12 @@ class Numconvert(ThemedTk):
                 prefix_widget.config(state = "disabled")
 
         def set_number_prefix(event):
+            self.type_error_label.place_forget()
             self.type_combobox.configure(style = "TLabelframe.TCombobox")
             set_prefix(self.type_combobox, self.prefix_entry)
 
         def set_converted_number_prefix(event):
+            self.converted_type_error_label.place_forget()
             self.converted_type_combobox.configure(style = "TLabelframe.TCombobox")
             set_prefix(self.converted_type_combobox, self.converted_prefix_entry)
 
@@ -135,12 +145,18 @@ class Numconvert(ThemedTk):
         self.number_labelframe.grid_propagate(0)
         self.number_labelframe.place(x = 10, y = 10)
 
+        self.type_error_label = Label(self.number_labelframe, style = "TLabelframe.TLabel", image = error_image)
+        self.type_error_label.image = error_image
+
         self.type_string = StringVar()
         self.type_combobox = Combobox(self.number_labelframe, style = "TLabelframe.TCombobox", textvariable = self.type_string, width = 18, state = "readonly", exportselection = 0, values = ["", " binary", " octal", " decimal", " hexadecimal"], font = (font, 10))
         self.type_combobox.place(x = 190, y = 40, anchor = "center")
         self.type_combobox.bind("<Button-1>", combobox_change_style)
         self.type_combobox.bind("<<ComboboxSelected>>", set_number_prefix)
         Tooltip(self.type_combobox, "select type")
+
+        self.value_error_label = Label(self.number_labelframe, style = "TLabelframe.TLabel", image = error_image)
+        self.value_error_label.image = error_image
 
         self.prefix_string = StringVar()
         self.prefix_string.trace("w", lambda *args: character_limit(self.prefix_string, 2))
@@ -173,6 +189,9 @@ class Numconvert(ThemedTk):
         self.converted_number_labelframe = LabelFrame(self, text = "Converted Number", width = 380, height = 215)
         self.converted_number_labelframe.grid_propagate(0)
         self.converted_number_labelframe.place(x = 10, y = 275)
+
+        self.converted_type_error_label = Label(self.converted_number_labelframe, style = "TLabelframe.TLabel", image = error_image)
+        self.converted_type_error_label.image = error_image
 
         self.converted_type_string = StringVar()
         self.converted_type_combobox = Combobox(self.converted_number_labelframe, style = "TLabelframe.TCombobox", textvariable = self.converted_type_string, width = 18, state = "readonly", exportselection = 0, values = ["", " binary", " octal", " decimal", " hexadecimal"], font = (font, 10))
