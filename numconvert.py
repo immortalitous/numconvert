@@ -1,3 +1,4 @@
+import os
 import PIL.Image
 import PIL.ImageTk
 import pyglet
@@ -9,7 +10,14 @@ from ttkthemes import ThemedTk
 
 from number import *
 
-pyglet.font.add_file("share_tech_mono.ttf")
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+pyglet.font.add_file(resource_path("share_tech_mono.ttf"))
 
 class Numconvert(ThemedTk):
 
@@ -26,7 +34,7 @@ class Numconvert(ThemedTk):
         font = "Share Tech Mono"
         entry_font = "Consolas"
 
-        error_image = PIL.Image.open("error.png")
+        error_image = PIL.Image.open(resource_path("error.png"))
         error_image.thumbnail((20, 20), PIL.Image.ANTIALIAS)
         error_image = PIL.ImageTk.PhotoImage(error_image)
 
