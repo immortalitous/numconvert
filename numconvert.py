@@ -28,6 +28,7 @@ class Numconvert(ThemedTk):
         ThemedTk.__init__(self, themebg = True)
         self.set_theme("equilux")
         self.title("numconvert")
+        self.iconbitmap(resource_path("icon.ico"))
         self.geometry("400x500")
         self.resizable(False, False)
 
