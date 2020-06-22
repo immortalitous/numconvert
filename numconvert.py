@@ -35,6 +35,10 @@ class Numconvert(ThemedTk):
         font = "Share Tech Mono"
         entry_font = "Consolas"
 
+        copy_image = PIL.Image.open(resource_path("copy.png"))
+        copy_image.thumbnail((20, 20), PIL.Image.ANTIALIAS)
+        copy_image = PIL.ImageTk.PhotoImage(copy_image)
+
         error_image = PIL.Image.open(resource_path("error.png"))
         error_image.thumbnail((20, 20), PIL.Image.ANTIALIAS)
         error_image = PIL.ImageTk.PhotoImage(error_image)
@@ -75,6 +79,9 @@ class Numconvert(ThemedTk):
             set_prefix(self.type_combobox, self.prefix_entry)
             clear(self.prefix_entry)
             clear(self.value_entry)
+            self.type_error_label.place_forget()#
+            self.value_error_label.place_forget()
+            self.value_error_tooltip.destroy()
             self.focus()
 
         def clear_converted_number():
@@ -82,24 +89,33 @@ class Numconvert(ThemedTk):
             set_prefix(self.converted_type_combobox, self.converted_prefix_entry)
             clear(self.converted_prefix_entry)
             clear(self.converted_value_entry)
+            self.converted_type_error_label.place_forget()
             self.focus()
 
         def convert():
             type = self.type_combobox.get().strip()
             converted_type = self.converted_type_combobox.get().strip()
             value = self.value_entry.get().strip()
-            if type and converted_type and value:
-                clear(self.converted_value_entry)
+            number = None
+            if type and value:
                 try:
-                    self.converted_value_entry.insert(0, Number(value, Numconvert.bases[type]).convert(Numconvert.bases[converted_type]))
+                    number = Number(value, Numconvert.bases[type])
+                    clear(self.converted_value_entry)
                 except ValueError:
                     self.value_error_label.place(x = 52.5, y = 95, anchor = "center")
+                    self.value_error_tooltip.destroy()
+                    self.value_error_tooltip = Tooltip(self.value_error_label, "invalid value", color = "#E03C31")
             if not type:
                 self.type_error_label.place(x = 90, y = 40, anchor = "center")
-            if not converted_type:
-                self.converted_type_error_label.place(x = 90, y = 40, anchor = "center")
             if not value:
                 self.value_error_label.place(x = 52.5, y = 95, anchor = "center")
+                self.value_error_tooltip.destroy()
+                self.value_error_tooltip = Tooltip(self.value_error_label, "enter a value", color = "#E03C31")
+            if number and converted_type:
+                self.converted_value_entry.insert(0, number.convert(Numconvert.bases[converted_type]))
+            elif not converted_type:
+                self.converted_type_error_label.place(x = 90, y = 40, anchor = "center")
+
             self.focus()
 
         def switch():
@@ -156,6 +172,7 @@ class Numconvert(ThemedTk):
 
         self.type_error_label = Label(self.number_labelframe, style = "TLabelframe.TLabel", image = error_image)
         self.type_error_label.image = error_image
+        Tooltip(self.type_error_label, "select a type", color = "#E03C31")
 
         self.type_string = StringVar()
         self.type_combobox = Combobox(self.number_labelframe, style = "TLabelframe.TCombobox", textvariable = self.type_string, width = 18, state = "readonly", exportselection = 0, values = ["", " binary", " octal", " decimal", " hexadecimal"], font = (font, 10))
@@ -166,6 +183,7 @@ class Numconvert(ThemedTk):
 
         self.value_error_label = Label(self.number_labelframe, style = "TLabelframe.TLabel", image = error_image)
         self.value_error_label.image = error_image
+        self.value_error_tooltip = Tooltip(self.value_error_label, "enter a value", color = "#E03C31")
 
         self.prefix_string = StringVar()
         self.prefix_string.trace("w", lambda *args: character_limit(self.prefix_string, 2))
@@ -181,11 +199,14 @@ class Numconvert(ThemedTk):
         self.value_label = Label(self.number_labelframe, style = "TLabelframe.TLabel", text = "Value")
         self.value_label.place(x = 190, y = 125, anchor = "center")
 
-        self.copy_number_button = Button(self.number_labelframe, style = "TLabelframe.TButton", command = copy_number, text = "copy", width = 5, cursor = "hand2")
+        self.copy_number_button = Button(self.number_labelframe, style = "TLabelframe.TButton", command = copy_number, image = copy_image, width = 5, cursor = "hand2")
+        self.copy_number_button.image = copy_image
         self.copy_number_button.place(x = 310, y = 95, anchor = "center")
+        Tooltip(self.copy_number_button, "copy number")
 
-        self.clear_number_button = Button(self.number_labelframe, style = "clear.TLabelframe.TButton", command = clear_number, text = "clear", width = 5, cursor = "hand2")
+        self.clear_number_button = Button(self.number_labelframe, style = "clear.TLabelframe.TButton", command = clear_number, text = "\u274c", width = 5, cursor = "hand2")
         self.clear_number_button.place(x = 189, y = 170, anchor = "center")
+        Tooltip(self.clear_number_button, "clear number")
 
         self.convert_button = Button(self, style = "convert.TButton", command = convert, text = "\u21ba", width = 5, cursor = "hand2")
         self.convert_button.place(x = 150, y = 253, anchor = "center")
@@ -201,6 +222,7 @@ class Numconvert(ThemedTk):
 
         self.converted_type_error_label = Label(self.converted_number_labelframe, style = "TLabelframe.TLabel", image = error_image)
         self.converted_type_error_label.image = error_image
+        Tooltip(self.converted_type_error_label, "select a type", color = "#E03C31")
 
         self.converted_type_string = StringVar()
         self.converted_type_combobox = Combobox(self.converted_number_labelframe, style = "TLabelframe.TCombobox", textvariable = self.converted_type_string, width = 18, state = "readonly", exportselection = 0, values = ["", " binary", " octal", " decimal", " hexadecimal"], font = (font, 10))
@@ -223,18 +245,22 @@ class Numconvert(ThemedTk):
         self.converted_value_label = Label(self.converted_number_labelframe, style = "TLabelframe.TLabel", text = "Value")
         self.converted_value_label.place(x = 190, y = 125, anchor = "center")
 
-        self.copy_converted_number_button = Button(self.converted_number_labelframe, style = "TLabelframe.TButton", command = copy_converted_number, text = "copy", width = 5, cursor = "hand2")
+        self.copy_converted_number_button = Button(self.converted_number_labelframe, style = "TLabelframe.TButton", command = copy_converted_number, image = copy_image, width = 5, cursor = "hand2")
+        self.copy_converted_number_button.image = copy_image
         self.copy_converted_number_button.place(x = 310, y = 95, anchor = "center")
+        Tooltip(self.copy_converted_number_button, "copy converted number")
 
-        self.clear_converted_number_button = Button(self.converted_number_labelframe, style = "clear.TLabelframe.TButton", command = clear_converted_number, text = "clear", width = 5, cursor = "hand2")
+        self.clear_converted_number_button = Button(self.converted_number_labelframe, style = "clear.TLabelframe.TButton", command = clear_converted_number, text = "\u274c", width = 5, cursor = "hand2")
         self.clear_converted_number_button.place(x = 189, y = 170, anchor = "center")
+        Tooltip(self.clear_converted_number_button, "clear converted number")
 
 
 class Tooltip:
 
-    def __init__(self, widget, text, wait_time = 1000, wraplength = 180):
+    def __init__(self, widget, text, color = "#555555", wait_time = 1000, wraplength = 180):
         self.__widget = widget
         self.__text = text
+        self.__color = color
         self.__wait_time = wait_time
         self.__wraplength = wraplength
         cursor_type = str(self.__widget["cursor"])
@@ -249,6 +275,10 @@ class Tooltip:
         self.__timestamp = None
         self.__window = None
         self.__x, self.__y = None, None
+
+    def destroy(self):
+        if self.__window:
+            self.__window.destroy()
 
     def __enter(self, event):
         self.__timestamp = time.time()
@@ -274,7 +304,7 @@ class Tooltip:
         self.__window.wm_geometry(f"+{self.__x+self.__padding[0]}+{self.__y+self.__padding[1]}")
         self.__window.config(highlightthickness = 1)
         self.__window.config(highlightbackground = "#555555")
-        label = Label(self.__window, text = self.__text, justify = "left", foreground = "#555555", background = "#ffffff", relief = "solid", borderwidth = 0, wraplength = self.__wraplength)
+        label = Label(self.__window, text = self.__text, justify = "left", foreground = self.__color, background = "#fefefe", relief = "solid", borderwidth = 0, wraplength = self.__wraplength)
         label.pack(padx = 2, pady = 2)
 
 

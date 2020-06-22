@@ -5,9 +5,10 @@ PyInstaller.__main__.run([
     "--name=numconvert",
     "--onefile",
     "--windowed",
+    "--add-data=icon.ico;.",
+    "--add-data=copy.png;.",
     "--add-data=error.png;.",
     "--add-data=share_tech_mono.ttf;.",
-    "--add-data=icon.ico;.",
     "--icon=icon.ico",
     "numconvert.py"
 ])
