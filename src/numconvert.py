@@ -28,11 +28,15 @@ class Numconvert(ThemedTk):
         ThemedTk.__init__(self, themebg = True)
         self.set_theme("equilux")
         self.title("numconvert")
-        self.iconbitmap(resource_path("icon.ico"))
+        if os.name == "nt":
+            self.iconbitmap(resource_path("icon.ico"))
         self.geometry("400x500")
         self.resizable(False, False)
 
-        font = "Share Tech Mono"
+        if os.name == "nt":
+            font = "Share Tech Mono"
+        elif os.name == "posix":
+            font = "Consolas"
         entry_font = "Consolas"
 
         copy_image = PIL.Image.open(resource_path("copy.png"))
