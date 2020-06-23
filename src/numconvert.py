@@ -17,7 +17,8 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-pyglet.font.add_file(resource_path("share_tech_mono.ttf"))
+if os.name == "nt":
+    pyglet.font.add_file(resource_path("share_tech_mono.ttf"))
 
 class Numconvert(ThemedTk):
 
