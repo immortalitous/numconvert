@@ -25,6 +25,6 @@ elif os.name == "posix":
         "--onefile",
         "--add-data=copy.png:.",
         "--add-data=error.png:.",
-        "--hidden-import=PIL.ImageTk",
+        "--hidden-import=PIL._tkinter_finder",
         "numconvert.py"
     ])
