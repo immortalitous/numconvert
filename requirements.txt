@@ -1,0 +1,6 @@
+Pillow == 7.0.0
+pyglet == 1.5.7
+pyperclip == 1.8.0
+ttkthemes == 3.0.0
+
+PyInstaller == 3.6
