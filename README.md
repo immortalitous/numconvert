@@ -27,6 +27,4 @@ Following packages, not included in the standard library, are required:
 - pyglet
 - pyperclip
 - ttkthemes
-
-
 - PyInstaller (used for compiling)
