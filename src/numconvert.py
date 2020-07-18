@@ -143,6 +143,10 @@ class Numconvert(ThemedTk):
 
             self.focus()
 
+        def combobox_choosing_style(event):
+            combobox = event.widget
+            combobox.configure(style = "choosing.TLabelframe.TCombobox")
+
         def set_prefix(combobox_widget, prefix_widget):
             type = combobox_widget.get().strip()
             if type in Numconvert.prefix_conversion:
@@ -166,9 +170,21 @@ class Numconvert(ThemedTk):
             self.converted_type_combobox.configure(style = "TLabelframe.TCombobox")
             set_prefix(self.converted_type_combobox, self.converted_prefix_entry)
 
-        def combobox_choosing_style(event):
-            combobox = event.widget
-            combobox.configure(style = "choosing.TLabelframe.TCombobox")
+        def check_prefix(event):
+            entry = event.widget
+            value = entry.get()
+            if value in Numconvert.prefix_conversion.values():
+                type = [type for type, prefix in Numconvert.prefix_conversion.items() if prefix == value][0]
+                if entry == self.prefix_entry:
+                    self.type_combobox.set(f" {type}")
+                elif entry == self.converted_prefix_entry:
+                    self.converted_type_combobox.set(f" {type}")
+            else:
+                if entry == self.prefix_entry:
+                    self.type_combobox.set("")
+                elif entry == self.converted_prefix_entry:
+                    self.converted_type_combobox.set("")
+
 
         self.number_labelframe = LabelFrame(self, text = "Number", width = 380, height = 215)
         self.number_labelframe.grid_propagate(0)
@@ -193,6 +209,7 @@ class Numconvert(ThemedTk):
         self.prefix_string.trace("w", lambda *args: character_limit(self.prefix_string, 2))
         self.prefix_entry = Entry(self.number_labelframe, style = "TLabelframe.TEntry", textvariable = self.prefix_string, width = 2, font = (entry_font, 11))
         self.prefix_entry.place(x = 90, y = 95, anchor = "center")
+        self.prefix_entry.bind("<KeyRelease>", check_prefix)
         self.prefix_label = Label(self.number_labelframe, style = "TLabelframe.TLabel", text = "Prefix")
         self.prefix_label.place(x = 90, y = 125, anchor = "center")
 
@@ -239,6 +256,7 @@ class Numconvert(ThemedTk):
         self.converted_prefix_string.trace("w", lambda *args: character_limit(self.converted_prefix_string, 2))
         self.converted_prefix_entry = Entry(self.converted_number_labelframe, style = "TLabelframe.TEntry", textvariable = self.converted_prefix_string, width = 2, font = (entry_font, 11))
         self.converted_prefix_entry.place(x = 90, y = 95, anchor = "center")
+        self.converted_prefix_entry.bind("<KeyRelease>", check_prefix)
         self.converted_prefix_label = Label(self.converted_number_labelframe, style = "TLabelframe.TLabel", text = "Prefix")
         self.converted_prefix_label.place(x = 90, y = 125, anchor = "center")
 
