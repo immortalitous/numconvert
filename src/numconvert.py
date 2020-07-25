@@ -41,7 +41,7 @@ class Numconvert(ThemedTk):
         entry_font = "Consolas"
 
         copy_image = PIL.Image.open(resource_path("copy.png"))
-        copy_image.thumbnail((20, 20), PIL.Image.ANTIALIAS)
+        copy_image.thumbnail((15, 15), PIL.Image.ANTIALIAS)
         copy_image = PIL.ImageTk.PhotoImage(copy_image)
 
         error_image = PIL.Image.open(resource_path("error.png"))
@@ -222,7 +222,7 @@ class Numconvert(ThemedTk):
 
         self.copy_number_button = Button(self.number_labelframe, style = "TLabelframe.TButton", command = copy_number, image = copy_image, width = 5, cursor = "hand2")
         self.copy_number_button.image = copy_image
-        self.copy_number_button.place(x = 301.25, y = 95, anchor = "center")
+        self.copy_number_button.place(x = 297, y = 95, anchor = "center")
         Tooltip(self.copy_number_button, "copy number")
 
         self.clear_number_button = Button(self.number_labelframe, style = "clear.TLabelframe.TButton", command = clear_number, text = "\u274c", width = 5, cursor = "hand2")
@@ -269,7 +269,7 @@ class Numconvert(ThemedTk):
 
         self.copy_converted_number_button = Button(self.converted_number_labelframe, style = "TLabelframe.TButton", command = copy_converted_number, image = copy_image, width = 5, cursor = "hand2")
         self.copy_converted_number_button.image = copy_image
-        self.copy_converted_number_button.place(x = 301.25, y = 95, anchor = "center")
+        self.copy_converted_number_button.place(x = 297, y = 95, anchor = "center")
         Tooltip(self.copy_converted_number_button, "copy converted number")
 
         self.clear_converted_number_button = Button(self.converted_number_labelframe, style = "clear.TLabelframe.TButton", command = clear_converted_number, text = "\u274c", width = 5, cursor = "hand2")
