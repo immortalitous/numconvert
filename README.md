@@ -28,7 +28,7 @@ Following packages, not included in the standard library, are [required](require
 - pyglet
 - pyperclip
 - ttkthemes
-- PyInstaller (used for compiling)
+- PyInstaller (used for freezing)
 
 
 ## Downloads
