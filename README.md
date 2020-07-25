@@ -2,12 +2,12 @@
 Simple converter for various numeral systems (binary, octal, hexadecimal, ...).
 
 ## Content
-1. [Overview](#overview)
+1. [Appearance](#appearance)
 2. [Compatibility](#compatibility)
 3. [Downloads](#downloads)
 
 
-## Overview
+## Appearance
 ![user interface on ubuntu](img/ui_ubuntu.png)
 ![user interface on windows](img/ui_windows.png)
 
