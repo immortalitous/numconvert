@@ -2,17 +2,17 @@
 Simple converter for various numeral systems (binary, octal, hexadecimal, ...).
 
 ## Content
-1. [Appearance](#appearance)
-2. [Compatibility](#compatibility)
-3. [Downloads](#downloads)
+1. [Appearance](#1-appearance)
+2. [Compatibility](#2-compatibility)
+3. [Downloads](#3-downloads)
 
 
-## Appearance
+## 1. Appearance
 ![user interface on ubuntu](img/ui_ubuntu.png)
 ![user interface on windows](img/ui_windows.png)
 
 
-## Compatibility
+## 2. Compatibility
 ### Operating systems
 Following operating systems are tested and supported:
 - Ubuntu 20.04 LTS
@@ -31,7 +31,7 @@ Following packages, not included in the standard library, are [required](require
 - PyInstaller (used for freezing)
 
 
-## Downloads
+## 3. Downloads
 - [Numconvert for Linux](bin/numconvert)
 - [Numconvert for Windows](bin/numconvert.exe)
 
